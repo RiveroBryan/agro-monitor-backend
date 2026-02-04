@@ -1,15 +1,14 @@
-# 1. Build Stage (Usamos una imagen con Maven para compilar)
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# 1. Build Stage (Cambiamos 17 por 21)
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-# Compilamos saltando los tests para agilizar en producción
+# Compilamos saltando los tests
 RUN mvn clean package -DskipTests
 
-# 2. Run Stage (Imagen ligera solo con Java para ejecutar)
-FROM eclipse-temurin:17-jre-alpine
+# 2. Run Stage (Cambiamos 17 por 21)
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-# Copiamos el .jar generado en la etapa anterior
 COPY --from=build /app/target/*.jar app.jar
 
 # Exponemos el puerto
